@@ -336,17 +336,15 @@ namespace ParLibrary.Converter
 
                 if (node.Tags.ContainsKey("Timestamp"))
                 {
-                    date = baseDate.AddSeconds(node.Tags["Timestamp"]);
+                    date = baseDate;
                 }
 
                 if (node.Tags.ContainsKey("FileInfo"))
                 {
                     FileInfo info = node.Tags["FileInfo"];
                     attributes = (int)info.Attributes;
-                    date = info.LastWriteTime;
+                    date = baseDate;
                 }
-
-                var seconds = (ulong)(date - baseDate).TotalSeconds;
 
                 writer.Write(parFile.IsCompressed ? 0x80000000 : 0x00000000);
                 writer.Write(parFile.DecompressedSize);
@@ -354,7 +352,7 @@ namespace ParLibrary.Converter
                 writer.Write((uint)dataPosition);
                 writer.Write(attributes);
                 writer.Write((uint)(dataPosition >> 32));
-                writer.Write(seconds);
+                writer.Write(0);
 
                 long currentPos = writer.Stream.Position;
                 writer.Stream.Seek(0, SeekOrigin.End);
